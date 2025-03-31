@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f4f4f8;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h2 {
+      margin-top: 0rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .section {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      max-width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .submit {
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    th, td {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+    }
+
+    .delete-button {
+      background-color: #dc3545;
+      margin-left: 1rem;
+    }
+
+    .delete-button:hover {
+      background-color: #b52a3a;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Gateway Admin</h1>
+
+  <div class="section">
+    <h2>Devices</h2>
+    <table id="device-table">
+      <thead>
+        <tr>
+          <th>Device ID</th>
+          <th>Name</th>
+          <th>URL</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <form id="device-form">
+      <label>Device ID:
+        <input type="text" id="deviceId" required />
+      </label>
+      <label>Name:
+        <input type="text" id="deviceName" required />
+      </label>
+      <label>URL:
+        <input type="url" id="deviceUrl" required />
+      </label>
+      <button type="submit" class="submit">Add/Update Device</button>
+    </form>
+  </div>
+
+  <div class="section">
+    <h2>Tenants</h2>
+    <table id="tenant-table">
+      <thead>
+        <tr>
+          <th>Tenant ID</th>
+          <th>Name</th>
+          <th>URL</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <form id="tenant-form">
+      <label>Tenant ID:
+        <input type="text" id="tenantId" required />
+      </label>
+      <label>Name:
+        <input type="text" id="tenantName" required />
+      </label>
+      <label>URL:
+        <input type="url" id="tenantUrl" required />
+      </label>
+      <button type="submit" class="submit">Add/Update Tenant</button>
+    </form>
+  </div>
+
+  <script>
+    async function fetchAndRender(endpoint, tableId, deleteFn) {
+      const res = await fetch(endpoint);
+      const data = await res.json();
+      const tableBody = document.querySelector(`#${tableId} tbody`);
+      tableBody.innerHTML = '';
+      for (const id in data) {
+        const { name, url } = data[id];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${id}</td>
+          <td>${name}</td>
+          <td>${url}</td>
+          <td>
+            <button class="delete-button" onclick="${deleteFn}('${id}')">Delete</button>
+          </td>`;
+        tableBody.appendChild(row);
+      }
+    }
+
+    async function deleteTenant(id) {
+      await fetch(`/api/tenants/${id}`, { method: 'DELETE' });
+      loadAll();
+    }
+
+    async function deleteDevice(id) {
+      await fetch(`/api/devices/${id}`, { method: 'DELETE' });
+      loadAll();
+    }
+
+    document.getElementById('tenant-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const tenantId = document.getElementById('tenantId').value;
+      const tenantName = document.getElementById('tenantName').value;
+      const tenantUrl = document.getElementById('tenantUrl').value;
+
+      await fetch('/api/tenants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenantId, name: tenantName, url: tenantUrl })
+      });
+
+      e.target.reset();
+      loadAll();
+    });
+
+    document.getElementById('device-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const deviceId = document.getElementById('deviceId').value;
+      const deviceName = document.getElementById('deviceName').value;
+      const deviceUrl = document.getElementById('deviceUrl').value;
+
+      await fetch('/api/devices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId, name: deviceName, url: deviceUrl })
+      });
+
+      e.target.reset();
+      loadAll();
+    });
+    
+    function loadAll() {
+      fetchAndRender('/api/tenants', 'tenant-table', 'deleteTenant');
+      fetchAndRender('/api/devices', 'device-table', 'deleteDevice');
+    }
+
+    // Initial load
+    loadAll();
+  </script>
+
+</body>
+</html>

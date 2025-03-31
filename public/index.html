@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Gateway</title></head>
+  <body>
+    <script src="https://senza-sdk.streaming.synamedia.com/latest/bundle.js"></script>
+    <script>
+      window.addEventListener("load", async () => {
+        try {
+          await senza.init();
+
+          const params = new URLSearchParams(window.location.search);
+          const deviceId = params.get('device') || senza.deviceManager.deviceInfo.deviceId;
+          const tenantId = params.get('tenant') || senza.deviceManager.deviceInfo.tenant;
+
+          if (!deviceId || !tenantId) {
+            document.body.innerText = "Missing deviceId or tenantId.";
+          } else {
+            let redirectApi = `/api/redirect?deviceId=${deviceId}&tenantId=${tenantId}`;
+            console.log(redirectApi);
+            let res = await fetch(redirectApi);
+            let data = await res.json();
+            console.log(data);
+
+            if (data.url) {
+              window.location.href = data.url;
+            } else {
+              document.body.innerText = "Redirection target not found.";
+            }
+          }
+        } catch (error) {
+          document.body.innerText = "Error: " + error.message;
+        }
+      });
+
+    </script>
+  </body>
+</html>
