@@ -1,0 +1,73 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f4f4f8;
+  color: #333;
+  margin: 0;
+  padding: 2rem;
+}
+
+h2 {
+  margin-top: 0rem;
+  padding-bottom: 0.5rem;
+}
+
+.section {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+input {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit {
+  margin-top: 1rem;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+th, td {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  margin-left: 1rem;
+}
+
+.delete-button:hover {
+  background-color: #b52a3a;
+}

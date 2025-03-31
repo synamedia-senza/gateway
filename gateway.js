@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { tenants as defaultTenants, defaultUrl, devices as defaultDevices } from './config.js';
+import { tenants as defaultTenants, devices as defaultDevices, defaultUrl } from './config.js';
 
 // Setup __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
